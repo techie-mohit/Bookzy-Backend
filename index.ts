@@ -4,6 +4,7 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';   
 import connectDb from './config/dbConnect';
+import authRoutes from './routes/authRoutes';
 
 dotenv.config({ override: true });
 
@@ -22,6 +23,10 @@ app.use(cors(corsOptions));
 app.use(express.json());    // it ensure data will be return in json format
 app.use(bodyParser.json());   // parse body of the incoming request
 app.use(cookieParser()); // Parse cookies
+
+
+// api endpoints
+app.use("/api/auth", authRoutes);
 
 app.listen(Port, ()=>{
     console.log(`Server is running on port ${Port}`);
