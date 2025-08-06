@@ -52,6 +52,7 @@ export const verifyEmail = async (req: Request, res: Response) => {
         })
 
         await user.save();
+        return response(res, 200, "Email Verified Successfully, You Can Now Log In");
 
     } catch (error) {
         console.log("Error in verifyEmail:", error);
@@ -116,5 +117,42 @@ export const forgotPassword = async(req:Request, res:Response)=>{
 }
 
 export const resetPassword = async(req:Request, res:Response)=>{
+    try {
+
+        const token = req.params.token;
+        const {newPassword} = req.body;
+
+        const user = await User.findOne({ resetPasswordToken: token, 
+            resetPasswordExpire: { $gt: new Date() } });
+
+        if (!user) {
+            return response(res, 400, "Invalid or Expired Reset Token");
+        }
+
+        user.password = newPassword;
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpire = undefined;
+        await user.save();
+
+        return response(res, 200, "Password Reset Successfully, You Can Now Log In");
+        
+    } catch (error) {
+        console.log("Error in forgotPassword:", error);
+        return response(res, 500, "Internal Server Error, Please Try Again Later");
+        
+    }
     
+}
+
+export const logout = async(req: Request, res: Response) => {
+    try{
+        res.clearCookie("accessToken", {
+            httpOnly: true,
+        });
+        return response(res, 200, "User Logged Out Successfully");
+    }
+    catch(error){
+        console.log("Error in logout:", error);
+        return response(res, 500, "Internal Server Error, Please Try Again Later");
+    }
 }
