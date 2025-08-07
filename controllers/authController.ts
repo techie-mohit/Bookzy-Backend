@@ -156,3 +156,27 @@ export const logout = async(req: Request, res: Response) => {
         return response(res, 500, "Internal Server Error, Please Try Again Later");
     }
 }
+
+
+export const checkUserAuth = async(req: Request, res: Response) => {
+   try{
+     const userId = req.id;
+     if(!userId){
+        return response(res, 401, "Unauthenticated User");
+     }
+
+     const user = await User.findById(userId).select("-password -verificationToken -resetPasswordToken -resetPasswordExpire");
+     if(!user){
+        return response(res, 404, "User not found");
+     }
+
+     return response(res, 200, "User Authenticated Successfully", user);
+
+   }
+   catch(error){
+        console.log("Error in checkUserAuth:", error);
+        return response(res, 500, "Internal Server Error, Please Try Again Later");
+   }
+
+
+}
