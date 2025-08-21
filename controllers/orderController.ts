@@ -2,6 +2,18 @@ import { Request, Response } from "express";
 import CardItems from "../models/CardItems";
 import { response } from "../utils/responseHandler";
 import Order from "../models/Order";
+import Razorpay from "razorpay";
+import dotenv from 'dotenv';
+import crypto from 'crypto';
+
+dotenv.config();
+
+const razorpay  = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID as string,
+    key_secret: process.env.RAZORPAY_KEY_SECRET
+})
+
+
 
 export const  createOrUpadateOrder = async(req:Request, res:Response)=>{
 
@@ -104,3 +116,62 @@ export const getOrderById = async(req:Request, res:Response)=>{
         return response(res, 500, "Internal Server Error");
     }
 }
+
+
+export const createPaymentWithRazorpay = async(req:Request, res: Response)=>{
+    try {
+        const {orderId} = req.body;
+        const order = await Order.findById(orderId);
+
+        if(!order){
+            return response(res, 404, "Order not found");
+        }
+
+        const razorpayOrder = await razorpay.orders.create({
+            amount:Math.round(order.totalAmount * 100),
+            currency: "INR",
+            receipt: order?._id.toString()
+        })
+
+        return response(res, 200, "Razorpay order created successfully", {order:razorpayOrder});
+    } catch (error) {
+        console.log("Error in creating Razorpay order", error);
+        return response(res, 500, "Internal Server Error");
+    }
+}
+
+
+export const handleRazorpayWebhook = async(req:Request, res:Response)=>{
+
+    try {
+        const secret = process.env.RAZORPAY_WEBHOOK_SECRET as string;
+
+    const shasum = crypto.createHmac('sha256', secret)
+    shasum.update(JSON.stringify(req.body));
+    const digest = shasum.digest('hex');
+
+    if(digest === req.headers['x-razorpay-signature']){
+        const paymentId = req.body.payload.payment.entity.id;
+        const orderId = req.body.payload.payment.entity.order.id;
+
+        await Order.findOneAndUpdate(
+            {'paymentDetails.razorpay_order_id' : orderId},
+            {
+                paymentStatus: 'complete',
+                status: 'processing',
+                'paymentDetails.razorpay_payment_id': paymentId,
+            }
+        )
+
+        return response(res, 200, "Razorpay webhook handled successfully");
+
+
+    }
+    else{
+        return response(res, 400, "Invalid Razorpay webhook signature");
+    }
+    } catch (error) {
+        console.log("Error in handling Razorpay webhook", error);
+        return response(res, 500, "Internal Server Error");
+    }
+} 
