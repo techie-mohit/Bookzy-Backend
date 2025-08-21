@@ -10,6 +10,7 @@ import cartRoutes from './routes/cartRoutes';
 import wishlistRoutes from './routes/wishlistRoutes';
 import addressRoutes from './routes/addressRoutes';
 import userRoutes from './routes/userRoutes';
+import orderRoutes from './routes/orderRoutes';
 
 dotenv.config({ override: true });
 
@@ -37,6 +38,7 @@ app.use("/api/cart", cartRoutes);
 app.use("/api/wishlist", wishlistRoutes);
 app.use("/api/user/address", addressRoutes);
 app.use("/api/user", userRoutes);
+app.use("/api/order", orderRoutes);
 
 app.listen(Port, ()=>{
     console.log(`Server is running on port ${Port}`);
