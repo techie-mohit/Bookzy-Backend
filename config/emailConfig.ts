@@ -35,7 +35,7 @@ const sendEmail = async(to:string, subject:string, body:string)=>{
 
 
 export const sendVerificationToEmail = async(to:string, verificationToken:string)=>{
-    const verificationUrl = `${process.env.FRONTEND_URL}/verify-email?token=${verificationToken}`;
+    const verificationUrl = `${process.env.FRONTEND_URL}/verify-email/${verificationToken}`;
     const subject = "Please Verify Your Email for Your Bookzy Account";
     const html = `
         <h1>Welcome to Your Bookzy! Verify Your Email</h1>
@@ -44,7 +44,10 @@ export const sendVerificationToEmail = async(to:string, verificationToken:string
         <p>If you did not create an account or did not request this email or already verified your email, please ignore this email.</p>
     `;
 
-    await sendEmail(to, subject, html);
+     const response = await sendEmail(to, subject, html);
+
+    // return what sendEmail gives OR a custom message
+    return response || { success: true, message: "Verification email sent successfully" };
 }
 
 export const sendResetPasswordLinkToEmail = async(to:string, resetToken:string)=>{

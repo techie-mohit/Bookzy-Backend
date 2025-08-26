@@ -14,28 +14,25 @@ export const register = async (req: Request, res: Response) => {
             return response(res, 400, "User already exists with this email");
         }
 
-        const verificationToken = crypto.randomBytes(20).toString('hex');
-
+        const verificationToken = crypto.randomBytes(20).toString("hex");
 
         const user = new User({ name, email, password, agreeToTerms, verificationToken });
         await user.save();
 
         const result = await sendVerificationToEmail(user.email, verificationToken);
-        console.log("Email sent successfully:", result);
+        console.log("Email sent successfully:", result); // will log nodemailer info (e.g., messageId)
 
         return response(res, 200, "User Registration Successful, Please Check Your Email for Verification Link");
-
     } catch (error) {
         console.log("Error in register:", error);
         return response(res, 500, "Internal Server Error, Please Try Again Later");
-
     }
-
-}
+};
 
 export const verifyEmail = async (req: Request, res: Response) => {
     try {
         const token = req.params.token;
+        console.log("Verification token:", token);
         const user = await User.findOne({ verificationToken: token });
 
         if (!user) {
