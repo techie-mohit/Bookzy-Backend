@@ -11,6 +11,7 @@ import wishlistRoutes from './routes/wishlistRoutes';
 import addressRoutes from './routes/addressRoutes';
 import userRoutes from './routes/userRoutes';
 import orderRoutes from './routes/orderRoutes';
+import passport from './controllers/strategy/googleStrategy';
 
 dotenv.config({ override: true });
 
@@ -28,6 +29,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());    // it ensure data will be return in json format
 app.use(bodyParser.json());   // parse body of the incoming request
+app.use(passport.initialize());
 app.use(cookieParser()); // Parse cookies
 
 

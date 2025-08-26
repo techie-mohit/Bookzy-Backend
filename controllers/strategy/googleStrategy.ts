@@ -40,7 +40,7 @@ passport.use(new GoogleStrategy(
                     email: emails?.[0]?.value,
                     name: name,
                     profilePicture: photos?.[0]?.value,
-                    isVerified: true,
+                    isVerified: emails?.[0]?.verified,
                     agreeToTerms: true,
 
                 })
@@ -54,3 +54,5 @@ passport.use(new GoogleStrategy(
 
     }
 ));
+
+export default passport;
