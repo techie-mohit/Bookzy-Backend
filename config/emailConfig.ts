@@ -51,7 +51,7 @@ export const sendVerificationToEmail = async(to:string, verificationToken:string
 }
 
 export const sendResetPasswordLinkToEmail = async(to:string, resetToken:string)=>{
-    const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
+    const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
     const subject = "Please Reset Your Password for Your Bookzy Account";
     const html = `
         <h1>Reset Your Password</h1>
@@ -60,5 +60,6 @@ export const sendResetPasswordLinkToEmail = async(to:string, resetToken:string)=
         <p>If you did not request this, please ignore this email.</p>
     `;
 
-    await sendEmail(to, subject, html);
+    const response = await sendEmail(to, subject, html);
+    return response || { success: true, message: "Reset password email sent successfully" };
 }
