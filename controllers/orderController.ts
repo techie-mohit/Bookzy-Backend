@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import CardItems from "../models/CardItems";
+import CardItems from "../models/CartItems";
 import { response } from "../utils/responseHandler";
 import Order from "../models/Order";
 import Razorpay from "razorpay";
