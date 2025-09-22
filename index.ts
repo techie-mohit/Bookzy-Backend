@@ -28,7 +28,7 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use(express.json());    // it ensure data will be return in json format
-app.use(bodyParser.json());   // parse body of the incoming request
+app.use(express.urlencoded({ extended: true }));
 app.use(passport.initialize());
 app.use(cookieParser()); // Parse cookies
 

@@ -6,6 +6,7 @@ import User from "../models/User";
 export const createOrUpdateAddressByUserId = async(req:Request, res:Response)=>{
     try {
         const userId = req.id;
+        console.log(req.body);
         const {addressLine1, addressLine2, phoneNumber, city, state, pincode, addressId} = req.body;
 
         if(!userId){
@@ -28,7 +29,7 @@ export const createOrUpdateAddressByUserId = async(req:Request, res:Response)=>{
             existingAddress.state = state;
             existingAddress.pincode = pincode;
             await existingAddress.save();
-            return response(res, 200, "Address Updated Successfully");
+            return response(res, 200, "Address Updated Successfully", existingAddress);
         } else {
             const newAddress = new Address({
                 user:userId,
@@ -62,7 +63,7 @@ export const getAddressByUserId = async(req:Request, res:Response)=>{
             return response(res, 400, "User Not Found, Please a provide a valid id");
         }
 
-        const address = await User.findById(userId).populate('address');
+        const address = await User.findById(userId).populate('addresses');
         if(!address){
             return response(res, 400, 'User Address Not found');
         }

@@ -33,8 +33,8 @@ const orderSchema = new Schema<IOrder>({
     user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     items: { type: [orderItemSchema] },
     totalAmount: { type: Number},
-    shippingAddress: { type: Schema.Types.ObjectId, ref: 'Address'},
-    paymentStatus: { type: String, enum: ['pending', 'complete', 'failed'] },
+    shippingAddress: [{ type: Schema.Types.ObjectId, ref: 'Address'}],
+    paymentStatus: { type: String, enum: ['pending', 'complete', 'failed'], default: 'pending'},
     paymentMethod: { type: String},
     paymentDetails: {
         razorpay_order_id: { type: String },

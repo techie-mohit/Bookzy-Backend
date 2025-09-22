@@ -6,6 +6,7 @@ import Razorpay from "razorpay";
 import dotenv from 'dotenv';
 import crypto from 'crypto';
 
+
 dotenv.config();
 
 const razorpay  = new Razorpay({
@@ -23,7 +24,7 @@ export const  createOrUpadateOrder = async(req:Request, res:Response)=>{
     const {orderId, shippingAddress, paymentMethod, paymentDetails, totalAmount} = req.body;
 
     const cart = await CardItems.findOne({user:userId}).populate("items.product");
-    if(!cart || cart.items.length == 0){
+    if(!cart || cart.items.length === 0){
         return response(res, 400, 'Cart is Empty');
 
     }
@@ -76,7 +77,7 @@ export const getOrderByUserId = async(req:Request, res:Response)=>{
         .sort({createdAt: -1})
          .populate("user", "name email").populate("shippingAddress").populate({
                path: "items.product",
-               model: "Products"
+               model: "Product"
            });
 
 
@@ -102,7 +103,7 @@ export const getOrderById = async(req:Request, res:Response)=>{
         const order = await Order.findById(orderId)
            .populate("user", "name email").populate("shippingAddress").populate({
                path: "items.product",
-               model: "Products"
+               model: "Product"
            });
 
         if(!order){
