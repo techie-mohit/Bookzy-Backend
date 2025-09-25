@@ -15,7 +15,7 @@ export const createProduct = async(req:Request, res:Response) =>{
         return response(res, 400, "No images uploaded , Images are required");
     }
 
-    let parsedPaymentDetails = JSON.parse(paymentDetails);
+    let parsedPaymentDetails = typeof paymentDetails === "string" ? JSON.parse(paymentDetails) : paymentDetails;
 
     if(paymentMode === "UPI" && (!parsedPaymentDetails || !parsedPaymentDetails.upiId)){
         return response(res, 400, "UPI payment mode requires UPI ID in payment details");
