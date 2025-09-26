@@ -30,6 +30,8 @@ router.get('/google/callback', passport.authenticate('google', { failureRedirect
             const access_Token = await generateToken(user);
            res.cookie("accessToken", access_Token, {
             httpOnly:true,
+            sameSite: 'none',
+            secure: true,
             maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days    
         })
             res.redirect(`${process.env.FRONTEND_URL}`);
