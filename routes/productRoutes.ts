@@ -6,7 +6,7 @@ import { createProduct, deleteProduct, getAllProducts, getProductById, getProduc
 const router = express.Router();
 
 router.post('/', authenticateMidddleware, multerMiddleware, createProduct);
-router.get('/', authenticateMidddleware, getAllProducts);
+router.get('/',  getAllProducts);
 router.get('/seller/:sellerId', authenticateMidddleware, getProductBySellerId);
 router.get('/:id', authenticateMidddleware, getProductById);
 router.delete('/delete/:productId', authenticateMidddleware, deleteProduct);
