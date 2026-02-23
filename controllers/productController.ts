@@ -92,8 +92,7 @@ export const getProductById = async(req:Request, res:Response)=>{
                 select:"name email profilePicture phoneNumber addresses",
                 populate:{
                     path:"addresses",
-                    select:"Address"
-
+                    select:"addressLine1 addressLine2 phoneNumber city state pincode"
                 }
             });
 

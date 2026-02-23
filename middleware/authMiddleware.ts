@@ -7,6 +7,7 @@ declare global{
     namespace Express{
         interface Request{
             id:string;
+            role:string;
         }
     }
 }
@@ -25,6 +26,7 @@ const authenticateMidddleware = async(req:Request, res:Response, next:NextFuncti
     }
 
     req.id = decode.userId;
+    req.role = decode.role;
     next();
     } catch (error) {
         console.log("Error in authentication middleware:", error);

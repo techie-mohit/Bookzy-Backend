@@ -7,7 +7,7 @@ import { generateToken } from "../utils/generateToken";
 
 export const register = async (req: Request, res: Response) => {
     try {
-        const { name, email, password, agreeToTerms } = req.body;
+        const { name, email, password, agreeToTerms, role } = req.body;
 
         const existingUser = await User.findOne({ email });
         if (existingUser) {
@@ -16,7 +16,7 @@ export const register = async (req: Request, res: Response) => {
 
         const verificationToken = crypto.randomBytes(20).toString("hex");
 
-        const user = new User({ name, email, password, agreeToTerms, verificationToken });
+        const user = new User({ name, email, password, agreeToTerms, verificationToken, role: role || "user" });
         await user.save();
 
         const result = await sendVerificationToEmail(user.email, verificationToken);
@@ -70,7 +70,7 @@ export const login = async (req: Request, res: Response) => {
             return response(res, 400, "Invalid email or password");
         }
 
-        if(!user.isVerified){
+        if(user.role !== "admin" && !user.isVerified){
             return response(res, 400, "Please verify your email before logging in");
         }
 
@@ -82,7 +82,7 @@ export const login = async (req: Request, res: Response) => {
             maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days    
         })
 
-        return response(res, 200, "User Logged In Successfully", {user:{name: user.name, email: user.email}});
+        return response(res, 200, "User Logged In Successfully", {user:{name: user.name, email: user.email, role: user.role}});
 
     } catch (error) {
         console.log("Error in verifyEmail:", error);

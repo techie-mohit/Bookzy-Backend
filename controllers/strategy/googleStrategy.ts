@@ -38,11 +38,11 @@ passport.use(new GoogleStrategy(
                 user = await User.create({
                     googleId: profile.id,
                     email: emails?.[0]?.value,
-                    name: name,
+                    name: name ? `${name.givenName || ''} ${name.familyName || ''}`.trim() : '',
                     profilePicture: photos?.[0]?.value,
                     isVerified: emails?.[0]?.verified,
                     agreeToTerms: true,
-
+                    role: "user",
                 })
                 callback(null, user);
         } catch (error) {
